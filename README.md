@@ -1,8 +1,8 @@
 # Dotter Griefing - Dotter ESP
 
-ESP and tracers for Bedrock players on Java based Minecraft Servers.  Privately announces cords of bedrock player client side.  
+ESP and tracers for finding Bedrock players on Java based Minecraft Servers.  Privately announces cords of bedrock player client side.  
 
-Free to fork, free to skid, it's open source.  For the Bedrock Incursion.
+Free to fork, free to skid, it's open source; For the Bedrock Incursion.
 
 ### Compatibility
 
@@ -12,4 +12,4 @@ Free to fork, free to skid, it's open source.  For the Bedrock Incursion.
 
 Just run ./gradlew build
 
-If you have error, figure it out.
+If you have error, figure it out by joining the discord server, and asking around
