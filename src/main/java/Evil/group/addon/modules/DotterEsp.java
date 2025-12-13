@@ -381,9 +381,14 @@ public class DotterEsp extends Module {
     private void onTick(TickEvent.Post event) {
         if (mc.world == null || mc.player == null) return;
 
+        // Get Bedrock players once and use for both notifications
+        List<AbstractClientPlayerEntity> bedrockPlayers = null;
+        if (notifyBedrockSeen.get() || discordWebhookEnabled.get()) {
+            bedrockPlayers = getCurrentBedrockPlayers();
+        }
+
         // Bedrock announce (client side)
-        if (notifyBedrockSeen.get()) {
-            List<AbstractClientPlayerEntity> bedrockPlayers = getCurrentBedrockPlayers();
+        if (notifyBedrockSeen.get() && bedrockPlayers != null) {
             Set<UUID> currentlyVisible = new HashSet<>();
 
             for (AbstractClientPlayerEntity p : bedrockPlayers) {
@@ -402,13 +407,14 @@ public class DotterEsp extends Module {
         }
 
         // Discord webhook notification for Bedrock players
-        if (discordWebhookEnabled.get()) {
+        if (discordWebhookEnabled.get() && bedrockPlayers != null) {
             String webhookUrl = discordWebhookUrl.get();
             
             if (webhookUrl != null && !webhookUrl.trim().isEmpty() 
                 && DiscordWebhook.isValidWebhookUrl(webhookUrl)) {
                 
-                List<AbstractClientPlayerEntity> bedrockPlayers = getCurrentBedrockPlayers();
+                // Reuse webhook instance for all notifications in this tick
+                DiscordWebhook webhook = new DiscordWebhook(webhookUrl);
                 Set<UUID> currentlyVisible = new HashSet<>();
                 
                 for (AbstractClientPlayerEntity p : bedrockPlayers) {
@@ -418,7 +424,6 @@ public class DotterEsp extends Module {
                     // Send webhook only once per player appearance
                     if (webhookNotifiedPlayers.add(id)) {
                         BlockPos bp = p.getBlockPos();
-                        DiscordWebhook webhook = new DiscordWebhook(webhookUrl);
                         webhook.sendPlayerDetection(
                             p.getGameProfile().getName(),
                             bp.getX(),
